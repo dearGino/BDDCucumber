@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -24,22 +25,31 @@ public class BasePage {
     public BasePage() {
         PageFactory.initElements(driverManager.getDriver(), this);
     }
+        
     
-    
-    
-    
-    
-    
-    
-    
-    protected WebElement sendKeysToField(WebElement element, String value) {
-    	element.click();
-    	element.clear();
+    protected WebElement sendValueToElement(WebElement element, String value) {
+    	scrollToElementJs(element);
+    	waitUntilElementToBeClickable(element).click();
+    	clearWebField(element);
     	element.sendKeys(value);
     	return element;
         
     }
-    //?
+    
+    protected void clearWebField(WebElement element){
+        while(!element.getAttribute("value").equals("")){
+            element.sendKeys(Keys.BACK_SPACE);
+        }
+    }
+    
+	protected void checkboxStatusChange(WebElement element, String attributeName, Boolean status) {
+		scrollToElementJs(element);
+		waitUntilElementToBeVisible(element);
+		js.executeScript("arguments[0].setAttribute(arguments[1], arguments[2]);", 
+                element, attributeName, status);
+	}
+    
+    //тупая проверка тайтла
     protected Boolean checkPageTitle(WebElement element, String value) {
     	return element.getAttribute("value").contains(value);   
     }
@@ -66,12 +76,6 @@ public class BasePage {
     	js.executeScript("arguments[0].click();", element);
         return element;
     }
-    
-	protected WebElement putRequestInSearchField (WebElement element, String value) {
-		waitUntilElementToBeClickable(element).click();
-		sendKeysToField(element, value);
-		return element;
-	}
 	
 	
 	
